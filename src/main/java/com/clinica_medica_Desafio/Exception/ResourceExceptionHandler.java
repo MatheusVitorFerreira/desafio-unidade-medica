@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.clinica_medica_Desafio.Service.Exceptions.DataAcessException;
 import com.clinica_medica_Desafio.Service.Exceptions.DuplicateExecption;
 import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
@@ -41,5 +42,11 @@ public class ResourceExceptionHandler implements Serializable {
 		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.CONFLICT.value(),
 				"Elemento Duplicado ", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+	}
+	@ExceptionHandler(DataAcessException.class)
+	public ResponseEntity<StandardError> DataAcessException(DataAcessException e, HttpServletRequest request) {
+		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+				"Erro ao buscar especialidades:", e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
 }
