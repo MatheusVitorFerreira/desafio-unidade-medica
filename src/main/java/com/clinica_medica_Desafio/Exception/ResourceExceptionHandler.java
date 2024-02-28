@@ -11,6 +11,7 @@ import com.clinica_medica_Desafio.Service.Exceptions.DuplicateExecption;
 import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
 import com.clinica_medica_Desafio.Service.Exceptions.InvalidCnpj;
+import com.clinica_medica_Desafio.Service.Exceptions.RegiaoNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -23,6 +24,7 @@ public class ResourceExceptionHandler implements Serializable {
 				"CNPJ Inválido", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
+
 	@ExceptionHandler(EspecialidadeNotFoundException.class)
 	public ResponseEntity<StandardError> especialidadeNotFound(EspecialidadeNotFoundException e,
 			HttpServletRequest request) {
@@ -30,6 +32,7 @@ public class ResourceExceptionHandler implements Serializable {
 				"Especialidade não encontrada", "Insira um Id valido", request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
+
 	@ExceptionHandler(EmptyField.class)
 	public ResponseEntity<StandardError> FieldInvalide(EmptyField e, HttpServletRequest request) {
 		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
@@ -43,10 +46,20 @@ public class ResourceExceptionHandler implements Serializable {
 				"Elemento Duplicado ", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
 	}
+
 	@ExceptionHandler(DataAcessException.class)
 	public ResponseEntity<StandardError> DataAcessException(DataAcessException e, HttpServletRequest request) {
 		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"Erro ao buscar especialidades:", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
+
+	@ExceptionHandler(RegiaoNotFoundException.class)
+	public ResponseEntity<StandardError> RegiaoNotFoundException(RegiaoNotFoundException e,
+			HttpServletRequest request) {
+		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
+				"Região não encontrada", "Insira um Id valido", request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	}
+
 }
