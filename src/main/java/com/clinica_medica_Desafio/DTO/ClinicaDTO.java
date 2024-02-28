@@ -13,7 +13,7 @@ import com.clinica_medica_Desafio.model.Regional;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 
-public class ClinicaDTO implements Serializable{
+public class ClinicaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	@NotBlank(message = "Campo Obrigatório")
@@ -41,12 +41,13 @@ public class ClinicaDTO implements Serializable{
 	}
 
 	public void setCnpj(String cnpj) {
-	    if (ValidatorCnpj.isValidCNPJ(cnpj)) {
-	        this.cnpj = cnpj;
-	    } else {
-	    	throw new InvalidCnpj(" " + cnpj);
-	    }
+		if (ValidatorCnpj.isValidCNPJ(cnpj)) {
+			this.cnpj = cnpj;
+		} else {
+			throw new InvalidCnpj(" " + cnpj);
+		}
 	}
+
 	public LocalDateTime getData_inauguracao() {
 		return data_inauguracao;
 	}
@@ -96,4 +97,3 @@ public class ClinicaDTO implements Serializable{
 	}
 
 }
-
