@@ -64,20 +64,21 @@ public class EspecialidadeMedicaController {
 
 	@PostMapping
 	public ResponseEntity<String> insert(@RequestBody EspecialidadeMedicaDTO objDto) {
-		try {
-			Especialidade_Medica obj = especialidadeService.fromDTO(objDto);
-			especialidadeService.insertEspecialidade(obj);
-			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId())
-					.toUri();
-			return ResponseEntity.created(uri).build();
-		} catch (EmptyField e) {
-			throw e;
-		} catch (DuplicateExecption e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Ocorreu um erro ao processar a solicitação.");
-		}
+	    try {
+	        if (especialidadeService.existsByDescricao(objDto.getDescricao())) {
+	            return ResponseEntity.status(HttpStatus.CONFLICT).body("Especialidade já existe.");
+	        }
+	        Especialidade_Medica obj = especialidadeService.fromDTO(objDto);
+	        especialidadeService.insertEspecialidade(obj);
+	        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId())
+	                .toUri();
+	        return ResponseEntity.created(uri).build();
+	    } catch (EmptyField e) {
+	        throw e;
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("Ocorreu um erro ao processar a solicitação.");
+	    }
 	}
 
 	@PutMapping(value = "/{id}")

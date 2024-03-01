@@ -4,62 +4,69 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import com.clinica_medica_Desafio.Service.Exceptions.InvalidCnpj;
-import com.clinica_medica_Desafio.Service.Exceptions.ValidatorCnpj;
+import org.hibernate.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.clinica_medica_Desafio.Repository.EspecialidadeMedicaRepository;
+import com.clinica_medica_Desafio.model.Clinica;
 import com.clinica_medica_Desafio.model.Especialidade_Medica;
 import com.clinica_medica_Desafio.model.Regional;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClinicaDTO implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private Long id;
-	@NotBlank(message = "Campo Obrigatório")
-	private String razao_social;
-	@Max(14)
-	private String cnpj;
-	@NotBlank(message = "Campo Obrigatório")
-	private LocalDateTime data_inauguracao;
-	private Boolean ativa;
-	private String nome_fantasia;
-	private String regionalLabel;
-	private Long idRegional;
-	private Long idEspecialidades;
-	@NotBlank(message = "Campo Obrigatório")
-	private Regional regional;
-	private List<Especialidade_Medica> especialidades_medicas = new ArrayList<>();
+    private Long id;
 
-	public ClinicaDTO(long id,String razao_social, String cnpj, LocalDateTime data_inauguracao, Boolean ativa,
-			String nome_fantasia, String regionalLabel, Regional regional,
-			ArrayList<Especialidade_Medica> especialidades) {
-		this.razao_social = razao_social;
-		this.cnpj = cnpj;
-		this.data_inauguracao = data_inauguracao;
-		this.ativa = ativa;
-		this.nome_fantasia = nome_fantasia;
-		this.regionalLabel = regionalLabel;
-		this.regional = regional;
-		this.especialidades_medicas = especialidades;
-		this.id = id;
-	}
+    @NotBlank(message = "Campo Obrigatório")
+    private String razao_social;
 
-	public ClinicaDTO(String nomeFantasia) {
-		this.nome_fantasia = nomeFantasia;
-	}
+    @Max(14)
+    private String cnpj;
 
-	public String getRazao_social() {
+    private Long regionalId;
+
+    private LocalDateTime data_inauguracao;
+
+    private Boolean ativa;
+
+    private String nome_fantasia;
+
+    private String regionalLabel;
+
+    private List<Especialidade_Medica> especialidades_medicas = new ArrayList<>();
+
+    @Autowired
+    EspecialidadeMedicaRepository especialidadeMedicaRepository;
+
+    public ClinicaDTO(Clinica clinica, Regional regional, List<Long> especialidadesIds) {
+        this.id = clinica.getId();
+        this.nome_fantasia = clinica.getNome_fantasia();
+        this.cnpj = clinica.getCnpj();
+        this.data_inauguracao = clinica.getData_inauguracao();
+        this.ativa = clinica.getAtiva();
+        this.razao_social = clinica.getRazao_social();
+        this.regionalLabel = regional.getLabel();
+        this.regionalId = regional.getId();
+        this.especialidades_medicas = new ArrayList<>();
+        for (Long especialidadeId : especialidadesIds) {
+            Especialidade_Medica especialidadeMedica = especialidadeMedicaRepository.findById(especialidadeId)
+                .orElseThrow(() -> new ObjectNotFoundException(especialidadeId, "Especialidade Médica não encontrada"));
+            this.especialidades_medicas.add(especialidadeMedica);
+        }
+    }
+
+    public ClinicaDTO() {
+    }
+
+    public String getRazao_social() {
 		return razao_social;
-	}
-
-	public Regional getRegional() {
-		return regional;
-	}
-
-	public void setRegional(Regional regional) {
-		this.regional = regional;
 	}
 
 	public void setRazao_social(String razao_social) {
@@ -71,11 +78,7 @@ public class ClinicaDTO implements Serializable {
 	}
 
 	public void setCnpj(String cnpj) {
-		if (ValidatorCnpj.isValidCNPJ(cnpj)) {
-			this.cnpj = cnpj;
-		} else {
-			throw new InvalidCnpj(" " + cnpj);
-		}
+		this.cnpj = cnpj;
 	}
 
 	public LocalDateTime getData_inauguracao() {
@@ -94,14 +97,6 @@ public class ClinicaDTO implements Serializable {
 		this.ativa = ativa;
 	}
 
-	public List<Especialidade_Medica> getEspecialidades_medicas() {
-		return especialidades_medicas;
-	}
-
-	public void setEspecialidades_medicas(List<Especialidade_Medica> especialidades_medicas) {
-		this.especialidades_medicas = especialidades_medicas;
-	}
-
 	public String getNome_fantasia() {
 		return nome_fantasia;
 	}
@@ -118,28 +113,41 @@ public class ClinicaDTO implements Serializable {
 		this.regionalLabel = regionalLabel;
 	}
 
-	public Long getIdRegional() {
-		return idRegional;
+	public List<Especialidade_Medica> getEspecialidades_medicas() {
+		return especialidades_medicas;
 	}
 
-	public void setIdRegional(Long idRegional) {
-		this.idRegional = idRegional;
+	public void setEspecialidades_medicas(List<Especialidade_Medica> especialidades_medicas) {
+		this.especialidades_medicas = especialidades_medicas;
 	}
 
-	public Long getIdEspecialidades() {
-		return idEspecialidades;
-	}
+	public List<Long> getEspecialidadesIds() {
+        List<Long> ids = new ArrayList<>();
+        for (Especialidade_Medica especialidade : especialidades_medicas) {
+            ids.add(especialidade.getId());
+        }
+        return ids;
+    }
 
-	public void setIdEspecialidades(Long idEspecialidades) {
-		this.idEspecialidades = idEspecialidades;
-	}
+    public void setEspecialidades(Set<Especialidade_Medica> especialidades) {
+        this.especialidades_medicas = new ArrayList<>(especialidades);
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public Long getRegionalId() {
+        return regionalId;
+    }
+
+    public void setRegionalId(Long regionalId) {
+        this.regionalId = regionalId;
+    }
+    public void setEspecialidadesIds(List<Long> especialidadesIds) {
+    }
 }
