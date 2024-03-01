@@ -48,18 +48,16 @@ public class Clinica implements Serializable {
 	public Clinica() {
 
 	}
-
-	public Clinica(Long id, String razao_social, String cnpj, LocalDateTime data_inauguracao, Boolean ativa,
-			Regional regional) {
+	public Clinica(Long id, String razao_social, String cnpj, String nome_fantasia, LocalDateTime data_inauguracao,
+			Boolean ativa) {
+		super();
+		this.id = id;
 		this.razao_social = razao_social;
 		this.cnpj = cnpj;
+		this.nome_fantasia = nome_fantasia;
 		this.data_inauguracao = data_inauguracao;
 		this.ativa = ativa;
-		this.regional = regional;
-		this.id = id;
-
 	}
-
 	public Regional getRegional() {
 		return regional;
 	}

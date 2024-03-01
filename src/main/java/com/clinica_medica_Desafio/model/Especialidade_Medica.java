@@ -28,8 +28,8 @@ public class Especialidade_Medica implements Serializable {
 
 	}
 
-	public Especialidade_Medica(Long id, String descricao) {
-		this.id = id;
+	public Especialidade_Medica(Long id_especialidade, String descricao) {
+		this.id = id_especialidade;
 		this.descricao = descricao;
 	}
 

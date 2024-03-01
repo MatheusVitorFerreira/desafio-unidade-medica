@@ -10,7 +10,7 @@ import com.clinica_medica_Desafio.model.Regional;
 public interface RegionalRepository extends JpaRepository<Regional, Long> {
 	boolean existsByLabel(String label);
 
-	boolean existsByLabelAndIdNot(String label, Long id);
+	boolean existsByLabelAndIdNot(String label, Long idRegional);
 
 	@Query("SELECT obj FROM Regional obj ORDER BY obj.label ASC")
 	Page<Regional> findAllByOrderByLabel(Pageable pageable);

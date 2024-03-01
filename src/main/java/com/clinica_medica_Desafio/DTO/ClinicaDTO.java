@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public class ClinicaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	@NotBlank(message = "Campo Obrigatório")
 	private String razao_social;
@@ -24,12 +25,41 @@ public class ClinicaDTO implements Serializable {
 	private LocalDateTime data_inauguracao;
 	private Boolean ativa;
 	private String nome_fantasia;
+	private String regionalLabel;
+	private Long idRegional;
+	private Long idEspecialidades;
 	@NotBlank(message = "Campo Obrigatório")
 	private Regional regional;
 	private List<Especialidade_Medica> especialidades_medicas = new ArrayList<>();
 
+	public ClinicaDTO(long id,String razao_social, String cnpj, LocalDateTime data_inauguracao, Boolean ativa,
+			String nome_fantasia, String regionalLabel, Regional regional,
+			ArrayList<Especialidade_Medica> especialidades) {
+		this.razao_social = razao_social;
+		this.cnpj = cnpj;
+		this.data_inauguracao = data_inauguracao;
+		this.ativa = ativa;
+		this.nome_fantasia = nome_fantasia;
+		this.regionalLabel = regionalLabel;
+		this.regional = regional;
+		this.especialidades_medicas = especialidades;
+		this.id = id;
+	}
+
+	public ClinicaDTO(String nomeFantasia) {
+		this.nome_fantasia = nomeFantasia;
+	}
+
 	public String getRazao_social() {
 		return razao_social;
+	}
+
+	public Regional getRegional() {
+		return regional;
+	}
+
+	public void setRegional(Regional regional) {
+		this.regional = regional;
 	}
 
 	public void setRazao_social(String razao_social) {
@@ -64,14 +94,6 @@ public class ClinicaDTO implements Serializable {
 		this.ativa = ativa;
 	}
 
-	public Regional getRegional() {
-		return regional;
-	}
-
-	public void setRegional(Regional regional) {
-		this.regional = regional;
-	}
-
 	public List<Especialidade_Medica> getEspecialidades_medicas() {
 		return especialidades_medicas;
 	}
@@ -86,6 +108,30 @@ public class ClinicaDTO implements Serializable {
 
 	public void setNome_fantasia(String nome_fantasia) {
 		this.nome_fantasia = nome_fantasia;
+	}
+
+	public String getRegionalLabel() {
+		return regionalLabel;
+	}
+
+	public void setRegionalLabel(String regionalLabel) {
+		this.regionalLabel = regionalLabel;
+	}
+
+	public Long getIdRegional() {
+		return idRegional;
+	}
+
+	public void setIdRegional(Long idRegional) {
+		this.idRegional = idRegional;
+	}
+
+	public Long getIdEspecialidades() {
+		return idEspecialidades;
+	}
+
+	public void setIdEspecialidades(Long idEspecialidades) {
+		this.idEspecialidades = idEspecialidades;
 	}
 
 	public Long getId() {

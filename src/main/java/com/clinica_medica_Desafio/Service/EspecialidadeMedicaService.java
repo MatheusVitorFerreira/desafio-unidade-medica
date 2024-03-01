@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import com.clinica_medica_Desafio.DTO.EspecialidadeMedicaDTO;
 import com.clinica_medica_Desafio.Repository.EspecialidadeMedicaRepository;
@@ -16,7 +17,7 @@ import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundExcept
 import com.clinica_medica_Desafio.model.Especialidade_Medica;
 
 import jakarta.transaction.Transactional;
-
+@Service
 public class EspecialidadeMedicaService {
 
 	@Autowired
