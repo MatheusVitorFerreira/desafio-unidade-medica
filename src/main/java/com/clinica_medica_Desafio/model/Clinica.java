@@ -36,12 +36,12 @@ public class Clinica implements Serializable {
 
 	private Boolean ativa;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "regional_id", nullable = false)
 	@JsonIgnore
 	private Regional regional;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "clinica_especialidade", joinColumns = @JoinColumn(name = "clinica_id"), inverseJoinColumns = @JoinColumn(name = "especialidade_id"))
 	private Set<Especialidade_Medica> especialidades = new HashSet<>();
 

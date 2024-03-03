@@ -1,7 +1,6 @@
 package com.clinica_medica_Desafio.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,90 +9,167 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.clinica_medica_Desafio.DTO.ClinicaDTO;
 import com.clinica_medica_Desafio.Repository.ClinicaRepository;
 import com.clinica_medica_Desafio.Repository.EspecialidadeMedicaRepository;
 import com.clinica_medica_Desafio.Repository.RegionalRepository;
+import com.clinica_medica_Desafio.Service.Exceptions.ClinicaNotFoundException;
+import com.clinica_medica_Desafio.Service.Exceptions.DataAcessException;
+import com.clinica_medica_Desafio.Service.Exceptions.DuplicateExecption;
+import com.clinica_medica_Desafio.Service.Exceptions.ErroInsercaoException;
+import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
+import com.clinica_medica_Desafio.Service.Exceptions.RegiaoNotFoundException;
 import com.clinica_medica_Desafio.model.Clinica;
 import com.clinica_medica_Desafio.model.Especialidade_Medica;
 import com.clinica_medica_Desafio.model.Regional;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ClinicaService {
 
-    @Autowired
-    private ClinicaRepository clinicarepository;
+	@Autowired
+	private ClinicaRepository clinicarepository;
 
-    @Autowired
-    private RegionalRepository regionalRepository;
+	@Autowired
+	private RegionalRepository regionalRepository;
 
-    @Autowired
-    private EspecialidadeMedicaRepository especialidadeMedicaRepository;
+	@Autowired
+	private EspecialidadeMedicaRepository especialidadeMedicaRepository;
 
-    public ClinicaDTO findClinica(Long id) {
-        Clinica clinica = clinicarepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException(id, "Clinica não Encontrada"));
-
-        List<Long> especialidadesIds = new ArrayList<>();
-        for (Especialidade_Medica especialidade : clinica.getEspecialidades()) {
-            especialidadesIds.add(especialidade.getId());
-        }
-        Regional regional = clinica.getRegional();
-
-        return new ClinicaDTO(clinica, regional, especialidadesIds);
-    }
-    public ClinicaService() {
+	@Transactional
+	public ClinicaDTO findClinica(Long id) {
+		try {
+			Clinica clinica = clinicarepository.findById(id)
+					.orElseThrow(() -> new ClinicaNotFoundException("Clínica não Encontrada"));
+			return new ClinicaDTO(clinica);
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Um Erro Aconteceu!! Acesso Negado", e);
+		}
 	}
-    public Page<Clinica> findPageClinica(Integer page, Integer linesPerPage, String orderBy, String direction) {
-        PageRequest pageRequest = PageRequest.of(page, linesPerPage);
-        return clinicarepository.findAll(pageRequest);
-    }
 
-    public List<Clinica> findAll() {
-        return clinicarepository.findAll();
-    }
+	public Page<Clinica> findPageClinica(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		try {
+			PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+			return clinicarepository.findAll(pageRequest);
+		} catch (DataAcessException e) {
+			throw new RuntimeException("Erro na ordenação: " + e.getMessage());
+		}
+	}
 
-    public Clinica fromDTO(ClinicaDTO objDto) {
-        Clinica clinica = new Clinica(objDto.getId(), objDto.getRazao_social(), objDto.getCnpj(),
-                objDto.getNome_fantasia(), objDto.getData_inauguracao(), objDto.getAtiva());
-        Long regionalId = objDto.getRegionalId();
-        Regional regional = regionalRepository.findById(regionalId)
-                .orElseThrow(() -> new ObjectNotFoundException(regionalId, "Região não encontrada"));
-        clinica.setRegional(regional);
+	public List<Clinica> findAll() {
+		return clinicarepository.findAll();
+	}
 
-        List<Long> especialidadesIds = objDto.getEspecialidadesIds();
-        Set<Especialidade_Medica> especialidades = new HashSet<>();
-        for (Long especialidadeId : especialidadesIds) {
-            Especialidade_Medica especialidade = especialidadeMedicaRepository.findById(especialidadeId)
-                    .orElseThrow(() -> new ObjectNotFoundException(especialidadeId, "Especialidade não encontrada"));
-            especialidades.add(especialidade);
-        }
-        clinica.setEspecialidades(especialidades);
-        return clinica;
-    }
-    public ClinicaDTO insert(ClinicaDTO clinicaDTO) {
-        LocalDateTime now = LocalDateTime.now();
-        List<Long> especialidadesIds = clinicaDTO.getEspecialidadesIds();
+	public Clinica fromDTO(ClinicaDTO objDto) {
+		Clinica clinica = new Clinica(objDto.getId(), objDto.getRazao_social(), objDto.getCnpj(),
+				objDto.getNome_fantasia(), objDto.getData_inauguracao(), objDto.getAtiva());
+		if (clinicarepository.existsByNomeFantasia(objDto.getNome_fantasia())) {
+			throw new DuplicateExecption("Nome fantasia já cadastrado");
+		}
+		Long regionalId = objDto.getRegionalId();
+		Regional regional = regionalRepository.findById(regionalId)
+				.orElseThrow(() -> new RegiaoNotFoundException("Região não encontrada"));
+		clinica.setRegional(regional);
+		List<Long> especialidadesIds = objDto.getEspecialidadesIds();
+		Set<Especialidade_Medica> especialidades = new HashSet<>();
+		for (Long especialidadeId : especialidadesIds) {
+			Especialidade_Medica especialidade = especialidadeMedicaRepository.findById(especialidadeId)
+					.orElseThrow(() -> new EspecialidadeNotFoundException("Especialidade não encontrada"));
+			especialidades.add(especialidade);
+		}
+		clinica.setEspecialidades(especialidades);
+		return clinica;
+	}
 
-        if (especialidadesIds.size() < 5) {
-            throw new IllegalArgumentException("Mínimo de 5 especialidades é obrigatório.");
-        }
+	@Transactional
+	public ClinicaDTO insert(ClinicaDTO clinicaDTO) {
+		try {
+			LocalDateTime now = LocalDateTime.now();
+			clinicaDTO.setData_inauguracao(now);
 
-        Clinica clinica = fromDTO(clinicaDTO);
+			List<Long> especialidadesIds = clinicaDTO.getEspecialidadesIds();
 
-        Set<Especialidade_Medica> especialidades = new HashSet<>();
-        for (Long especialidadeId : especialidadesIds) {
-        	System.out.println(especialidadesIds);
-            Especialidade_Medica especialidade = especialidadeMedicaRepository.findById(especialidadeId)
-                    .orElseThrow(() -> new ObjectNotFoundException(especialidadeId, "Especialidade não encontrada"));
-            especialidades.add(especialidade);
-        }
-        clinica.setEspecialidades(especialidades);
+			if (especialidadesIds.size() < 4) {
+				throw new ErroInsercaoException("Mínimo de 5 especialidades é obrigatório.");
+			}
+			Clinica clinica = fromDTO(clinicaDTO);
+			clinica = clinicarepository.save(clinica);
 
-        clinica = clinicarepository.save(clinica);
+			return new ClinicaDTO(clinica);
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		}
+	}
 
-        return new ClinicaDTO(clinica, clinica.getRegional(), especialidadesIds);
-    }
+	@Transactional
+	public ClinicaDTO update(Long id, ClinicaDTO clinicaDTO) {
+		try {
+			Clinica clinica = clinicarepository.findById(id)
+					.orElseThrow(() -> new ClinicaNotFoundException("Clínica não Encontrada"));
+			clinica.setRazao_social(clinicaDTO.getRazao_social());
+			clinica.setCnpj(clinicaDTO.getCnpj());
+			clinica.setNome_fantasia(clinicaDTO.getNome_fantasia());
+			Long regionalId = clinicaDTO.getRegionalId();
+			Regional regional = regionalRepository.findById(regionalId)
+					.orElseThrow(() -> new RegiaoNotFoundException("Região não encontrada"));
+			clinica.setRegional(regional);
+			Set<Especialidade_Medica> especialidades = new HashSet<>();
+			for (Long especialidadeId : clinicaDTO.getEspecialidadesIds()) {
+				Especialidade_Medica especialidade = especialidadeMedicaRepository.findById(especialidadeId)
+						.orElseThrow(() -> new EspecialidadeNotFoundException("Especialidade não encontrada"));
+				especialidades.add(especialidade);
+			}
+			clinica.setEspecialidades(especialidades);
+			List<Long> especialidadesIds = clinicaDTO.getEspecialidadesIds();
+			if (especialidadesIds.size() < 5) {
+				throw new ErroInsercaoException("Mínimo de 5 especialidades é obrigatório.");
+			}
+			clinica = clinicarepository.save(clinica);
+			return new ClinicaDTO(clinica);
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		}
+	}
+
+	@Transactional
+	public Clinica adicionarEspecialidade(Long idClinica, ClinicaDTO clinicaDTO) {
+		try {
+			Clinica clinica = clinicarepository.findById(idClinica)
+					.orElseThrow(() -> new ClinicaNotFoundException("Clínica não Encontrada"));
+
+			Set<Especialidade_Medica> especialidades = new HashSet<>();
+			for (Long especialidadeId : clinicaDTO.getEspecialidadesIds()) {
+				Especialidade_Medica especialidade = especialidadeMedicaRepository.findById(especialidadeId)
+						.orElseThrow(() -> new EspecialidadeNotFoundException("Especialidade não encontrada"));
+				especialidades.add(especialidade);
+			}
+			clinica.getEspecialidades().addAll(especialidades);
+
+			clinica = clinicarepository.save(clinica);
+
+			return clinica;
+		} catch (ObjectNotFoundException e) {
+			throw e;
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		}
+	}
+
+	public void delete(Long id) {
+		try {
+			ClinicaDTO clinica = findClinica(id);
+			if (clinica == null) {
+				throw new ClinicaNotFoundException("Clínica não Encontrada");
+			}
+			clinicarepository.deleteById(id);
+		} catch (ObjectNotFoundException e) {
+			throw e;
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		}
+	}
 }

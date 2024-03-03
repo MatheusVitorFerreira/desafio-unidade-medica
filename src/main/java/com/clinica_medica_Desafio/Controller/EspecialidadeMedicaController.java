@@ -116,7 +116,6 @@ public class EspecialidadeMedicaController {
 		Page<Especialidade_Medica> especialidadesOrdenadas = especialidadeService
 				.findAllByOrderByDescricaoAsc(PageRequest.of(page, linesPerPage));
 		Page<String> descricoes = especialidadesOrdenadas.map(Especialidade_Medica::getDescricao);
-
 		return ResponseEntity.ok().body(descricoes);
 	}
 }

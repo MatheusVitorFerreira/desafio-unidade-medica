@@ -2,21 +2,23 @@ package com.clinica_medica_Desafio.Service;
 
 import java.util.List;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.clinica_medica_Desafio.DTO.EspecialidadeMedicaDTO;
 import com.clinica_medica_Desafio.Repository.EspecialidadeMedicaRepository;
+import com.clinica_medica_Desafio.Service.Exceptions.DataAcessException;
 import com.clinica_medica_Desafio.Service.Exceptions.DuplicateExecption;
 import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
 import com.clinica_medica_Desafio.model.Especialidade_Medica;
 
 import jakarta.transaction.Transactional;
+
 @Service
 public class EspecialidadeMedicaService {
 
@@ -25,13 +27,17 @@ public class EspecialidadeMedicaService {
 
 	public Especialidade_Medica findEspecialidade(Long id) {
 		return especialidadeRepository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException(id, "Especialidade Medica não Encontrada"));
+				.orElseThrow(() -> new EspecialidadeNotFoundException("Especialidade Medica não Encontrada"));
 	}
 
 	public Page<Especialidade_Medica> findPageEspecialidade(Integer page, Integer linesPerPage, String orderBy,
 			String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage);
-		return especialidadeRepository.findAll(pageRequest);
+		try {
+			PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+			return especialidadeRepository.findAll(pageRequest);
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Um Erro Aconteceu!! Acesso Negado", e);
+		}
 	}
 
 	public List<Especialidade_Medica> findAll() {
@@ -39,17 +45,27 @@ public class EspecialidadeMedicaService {
 	}
 
 	public Especialidade_Medica fromDTO(EspecialidadeMedicaDTO objDto) {
-		Especialidade_Medica especialidadeMedica = new Especialidade_Medica(objDto.getId(), objDto.getDescricao());
-		return especialidadeMedica;
+		try {
+			if (especialidadeRepository.existsByDescricao(objDto.getDescricao())) {
+				throw new DuplicateExecption("Especialidade com essa descrição já cadastrada.");
+			}
+			Especialidade_Medica especialidadeMedica = new Especialidade_Medica(objDto.getId(), objDto.getDescricao());
+			return especialidadeMedica;
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Um Erro Aconteceu!! Acesso Negado", e);
+		}
 	}
 
 	@Transactional
 	public Especialidade_Medica insertEspecialidade(Especialidade_Medica obj) {
-		if (obj.getDescricao().isEmpty()) {
-			throw new EmptyField("Campo vazio");
+		try {
+			if (obj.getDescricao().isEmpty()) {
+				throw new EmptyField("Campo vazio");
+			}
+			return especialidadeRepository.save(obj);
+		} catch (DataAcessException e) {
+			throw new DataAcessException("Um Erro Aconteceu!! Acesso Negado", e);
 		}
-		obj = especialidadeRepository.save(obj);
-		return obj;
 	}
 
 	@Transactional

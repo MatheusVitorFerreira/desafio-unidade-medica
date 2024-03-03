@@ -45,5 +45,4 @@ public class RegionalDTO implements Serializable {
 	public void setRegiao(String regiao) {
 		this.regiao = regiao;
 	}
-
 }

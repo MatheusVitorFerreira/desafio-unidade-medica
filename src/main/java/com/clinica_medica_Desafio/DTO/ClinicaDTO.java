@@ -6,13 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.ObjectNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.clinica_medica_Desafio.Repository.EspecialidadeMedicaRepository;
 import com.clinica_medica_Desafio.model.Clinica;
 import com.clinica_medica_Desafio.model.Especialidade_Medica;
-import com.clinica_medica_Desafio.model.Regional;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.validation.constraints.Max;
@@ -20,52 +16,46 @@ import jakarta.validation.constraints.NotBlank;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClinicaDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Long id;
+	private Long id;
 
-    @NotBlank(message = "Campo Obrigatório")
-    private String razao_social;
+	@NotBlank(message = "Campo Obrigatório")
+	private String razao_social;
 
-    @Max(14)
-    private String cnpj;
+	@Max(14)
+	private String cnpj;
 
-    private Long regionalId;
+	private Long regionalId;
 
-    private LocalDateTime data_inauguracao;
+	private String regiao;
 
-    private Boolean ativa;
+	private LocalDateTime data_inauguracao;
 
-    private String nome_fantasia;
+	private Boolean ativa;
 
-    private String regionalLabel;
+	private String nome_fantasia;
 
-    private List<Especialidade_Medica> especialidades_medicas = new ArrayList<>();
+	private String regionalLabel;
+	private List<Especialidade_Medica> especialidades_medicas = new ArrayList<>();
 
-    @Autowired
-    EspecialidadeMedicaRepository especialidadeMedicaRepository;
+	public ClinicaDTO(Clinica clinica) {
+		this.id = clinica.getId();
+		this.nome_fantasia = clinica.getNome_fantasia();
+		this.cnpj = clinica.getCnpj();
+		this.data_inauguracao = clinica.getData_inauguracao();
+		this.ativa = clinica.getAtiva();
+		this.razao_social = clinica.getRazao_social();
+		this.regiao = clinica.getRegional().getRegiao();
+		this.regionalLabel = clinica.getRegional().getLabel();
+		this.regionalId = clinica.getRegional().getId();
+		this.especialidades_medicas = new ArrayList<>(clinica.getEspecialidades());
+	}
 
-    public ClinicaDTO(Clinica clinica, Regional regional, List<Long> especialidadesIds) {
-        this.id = clinica.getId();
-        this.nome_fantasia = clinica.getNome_fantasia();
-        this.cnpj = clinica.getCnpj();
-        this.data_inauguracao = clinica.getData_inauguracao();
-        this.ativa = clinica.getAtiva();
-        this.razao_social = clinica.getRazao_social();
-        this.regionalLabel = regional.getLabel();
-        this.regionalId = regional.getId();
-        this.especialidades_medicas = new ArrayList<>();
-        for (Long especialidadeId : especialidadesIds) {
-            Especialidade_Medica especialidadeMedica = especialidadeMedicaRepository.findById(especialidadeId)
-                .orElseThrow(() -> new ObjectNotFoundException(especialidadeId, "Especialidade Médica não encontrada"));
-            this.especialidades_medicas.add(especialidadeMedica);
-        }
-    }
+	public ClinicaDTO() {
+	}
 
-    public ClinicaDTO() {
-    }
-
-    public String getRazao_social() {
+	public String getRazao_social() {
 		return razao_social;
 	}
 
@@ -116,38 +106,43 @@ public class ClinicaDTO implements Serializable {
 	public List<Especialidade_Medica> getEspecialidades_medicas() {
 		return especialidades_medicas;
 	}
-
-	public void setEspecialidades_medicas(List<Especialidade_Medica> especialidades_medicas) {
-		this.especialidades_medicas = especialidades_medicas;
+	@JsonIgnore
+	public List<Long> getEspecialidadesIds() {
+		List<Long> ids = new ArrayList<>();
+		for (Especialidade_Medica especialidade : especialidades_medicas) {
+			ids.add(especialidade.getId());
+		}
+		return ids;
+	}
+	@JsonIgnore
+	public void setEspecialidades(Set<Especialidade_Medica> especialidades) {
+		this.especialidades_medicas = new ArrayList<>(especialidades);
 	}
 
-	public List<Long> getEspecialidadesIds() {
-        List<Long> ids = new ArrayList<>();
-        for (Especialidade_Medica especialidade : especialidades_medicas) {
-            ids.add(especialidade.getId());
-        }
-        return ids;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setEspecialidades(Set<Especialidade_Medica> especialidades) {
-        this.especialidades_medicas = new ArrayList<>(especialidades);
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getRegionalId() {
+		return regionalId;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setRegionalId(Long regionalId) {
+		this.regionalId = regionalId;
+	}
 
-    public Long getRegionalId() {
-        return regionalId;
-    }
+	public void setEspecialidadesIds(List<Long> especialidadesIds) {
+	}
 
-    public void setRegionalId(Long regionalId) {
-        this.regionalId = regionalId;
-    }
-    public void setEspecialidadesIds(List<Long> especialidadesIds) {
-    }
+	public String getRegiao() {
+		return regiao;
+	}
+
+	public void setRegiao(String regiao) {
+		this.regiao = regiao;
+	}
 }
