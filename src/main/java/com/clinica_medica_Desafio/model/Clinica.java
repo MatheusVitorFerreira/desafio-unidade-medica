@@ -30,7 +30,7 @@ public class Clinica implements Serializable {
 	private String razao_social;
 
 	private String cnpj;
-	private String nome_fantasia;
+	private String nomefantasia;
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	private LocalDateTime data_inauguracao;
 
@@ -48,13 +48,13 @@ public class Clinica implements Serializable {
 	public Clinica() {
 
 	}
-	public Clinica(Long id, String razao_social, String cnpj, String nome_fantasia, LocalDateTime data_inauguracao,
+	public Clinica(Long id, String razao_social, String cnpj, String nomefantasia, LocalDateTime data_inauguracao,
 			Boolean ativa) {
 		super();
 		this.id = id;
 		this.razao_social = razao_social;
 		this.cnpj = cnpj;
-		this.nome_fantasia = nome_fantasia;
+		this.nomefantasia = nomefantasia;
 		this.data_inauguracao = data_inauguracao;
 		this.ativa = ativa;
 	}
@@ -119,12 +119,12 @@ public class Clinica implements Serializable {
 		return Objects.hash(id);
 	}
 
-	public String getNome_fantasia() {
-		return nome_fantasia;
+	public String getNomefantasia() {
+		return nomefantasia;
 	}
 
-	public void setNome_fantasia(String nome_fantasia) {
-		this.nome_fantasia = nome_fantasia;
+	public void setNomefantasia(String nomefantasia) {
+		this.nomefantasia = nomefantasia;
 	}
 
 	@Override

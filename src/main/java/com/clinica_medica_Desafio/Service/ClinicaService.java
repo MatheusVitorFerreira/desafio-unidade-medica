@@ -66,8 +66,8 @@ public class ClinicaService {
 
 	public Clinica fromDTO(ClinicaDTO objDto) {
 		Clinica clinica = new Clinica(objDto.getId(), objDto.getRazao_social(), objDto.getCnpj(),
-				objDto.getNome_fantasia(), objDto.getData_inauguracao(), objDto.getAtiva());
-		if (clinicarepository.existsByNomeFantasia(objDto.getNome_fantasia())) {
+				objDto.getNomefantasia(), objDto.getData_inauguracao(), objDto.getAtiva());
+		if (clinicarepository.existsByNomefantasia(objDto.getNomefantasia())) {
 			throw new DuplicateExecption("Nome fantasia já cadastrado");
 		}
 		Long regionalId = objDto.getRegionalId();
@@ -112,7 +112,7 @@ public class ClinicaService {
 					.orElseThrow(() -> new ClinicaNotFoundException("Clínica não Encontrada"));
 			clinica.setRazao_social(clinicaDTO.getRazao_social());
 			clinica.setCnpj(clinicaDTO.getCnpj());
-			clinica.setNome_fantasia(clinicaDTO.getNome_fantasia());
+			clinica.setNomefantasia(clinicaDTO.getNomefantasia());
 			Long regionalId = clinicaDTO.getRegionalId();
 			Regional regional = regionalRepository.findById(regionalId)
 					.orElseThrow(() -> new RegiaoNotFoundException("Região não encontrada"));

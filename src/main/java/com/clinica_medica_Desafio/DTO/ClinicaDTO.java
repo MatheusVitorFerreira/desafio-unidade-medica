@@ -34,14 +34,14 @@ public class ClinicaDTO implements Serializable {
 
 	private Boolean ativa;
 
-	private String nome_fantasia;
+	private String nomefantasia;
 
 	private String regionalLabel;
 	private List<Especialidade_Medica> especialidades_medicas = new ArrayList<>();
 
 	public ClinicaDTO(Clinica clinica) {
 		this.id = clinica.getId();
-		this.nome_fantasia = clinica.getNome_fantasia();
+		this.nomefantasia = clinica. getNomefantasia();
 		this.cnpj = clinica.getCnpj();
 		this.data_inauguracao = clinica.getData_inauguracao();
 		this.ativa = clinica.getAtiva();
@@ -87,12 +87,12 @@ public class ClinicaDTO implements Serializable {
 		this.ativa = ativa;
 	}
 
-	public String getNome_fantasia() {
-		return nome_fantasia;
+	public String getNomefantasia() {
+		return nomefantasia;
 	}
 
-	public void setNome_fantasia(String nome_fantasia) {
-		this.nome_fantasia = nome_fantasia;
+	public void setnomefantasia(String nomefantasia) {
+		this.nomefantasia = nomefantasia;
 	}
 
 	public String getRegionalLabel() {
