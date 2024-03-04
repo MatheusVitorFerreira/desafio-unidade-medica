@@ -5,7 +5,7 @@ public class ErroInsercaoException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	public ErroInsercaoException(String msg) {
-		super();
+		 super(msg);
 	}
 
 	public ErroInsercaoException(String msg, Throwable cause) {

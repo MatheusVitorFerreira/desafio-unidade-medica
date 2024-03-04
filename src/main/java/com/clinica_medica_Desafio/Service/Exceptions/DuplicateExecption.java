@@ -5,7 +5,7 @@ public class DuplicateExecption extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	public DuplicateExecption(String msg) {
-		super();
+		 super(msg);
 	}
 
 	public DuplicateExecption(String msg, Throwable cause) {

@@ -5,7 +5,7 @@ public class DataAcessException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	public DataAcessException(String msg) {
-		super();
+		 super(msg);
 	}
 
 	public DataAcessException(String msg, Throwable cause) {

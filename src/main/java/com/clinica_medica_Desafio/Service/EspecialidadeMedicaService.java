@@ -100,5 +100,4 @@ public class EspecialidadeMedicaService {
 	public Page<Especialidade_Medica> findAllByOrderByDescricaoAsc(Pageable pageable) {
 		return especialidadeRepository.findAllByOrderByDescricaoAsc(pageable);
 	}
-
 }
