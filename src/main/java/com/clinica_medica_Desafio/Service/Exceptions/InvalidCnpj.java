@@ -8,8 +8,4 @@ public class InvalidCnpj extends RuntimeException {
 		super(msg);
 	}
 
-	public InvalidCnpj(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
 }

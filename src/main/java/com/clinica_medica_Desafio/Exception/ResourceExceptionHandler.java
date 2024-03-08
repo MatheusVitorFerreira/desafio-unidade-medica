@@ -7,12 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.clinica_medica_Desafio.Service.Exceptions.ClinicaIdInvalidException;
 import com.clinica_medica_Desafio.Service.Exceptions.ClinicaNotFoundException;
-import com.clinica_medica_Desafio.Service.Exceptions.DataAcessException;
 import com.clinica_medica_Desafio.Service.Exceptions.DuplicateExecption;
 import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.ErroInsercaoException;
@@ -24,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import springfox.documentation.annotations.ApiIgnore;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
@@ -40,8 +37,6 @@ public class ResourceExceptionHandler {
 
 	@ExceptionHandler(RegiaoNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    @ApiIgnore
 	public ResponseEntity<StandardError> RegiaoNotFoundException(RegiaoNotFoundException e,
 			HttpServletRequest request) {
 
@@ -98,14 +93,6 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> DuplicateExecption(DuplicateExecption e, HttpServletRequest request) {
 		StandardError err = new StandardError(HttpStatus.CONFLICT.value(), e.getMessage(), System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
-	}
-
-	@ExceptionHandler(DataAcessException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ResponseEntity<StandardError> DataAcessException(DataAcessException e, HttpServletRequest request) {
-		StandardError err = new StandardError(HttpStatus.NOT_ACCEPTABLE.value(), e.getMessage(),
-				System.currentTimeMillis());
-		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(err);
 	}
 
 	public void handle(HttpServletRequest request, HttpServletResponse response,

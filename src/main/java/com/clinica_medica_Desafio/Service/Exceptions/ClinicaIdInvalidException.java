@@ -8,8 +8,4 @@ public class ClinicaIdInvalidException extends RuntimeException {
 		super(msg);
 	}
 
-	public ClinicaIdInvalidException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
 }

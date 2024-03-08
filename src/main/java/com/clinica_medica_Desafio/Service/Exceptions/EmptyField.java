@@ -7,9 +7,4 @@ public class EmptyField extends RuntimeException {
 	public EmptyField(String msg) {
 		super(msg);
 	}
-
-	public EmptyField(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
 }

@@ -7,9 +7,4 @@ public class ClinicaNotFoundException extends RuntimeException {
 	public ClinicaNotFoundException(String msg) {
 		super(msg);
 	}
-
-	public ClinicaNotFoundException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
 }

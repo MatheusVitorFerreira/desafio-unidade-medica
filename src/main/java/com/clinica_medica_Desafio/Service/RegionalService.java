@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.clinica_medica_Desafio.Repository.RegionalRepository;
-import com.clinica_medica_Desafio.Service.Exceptions.DataAcessException;
 import com.clinica_medica_Desafio.Service.Exceptions.DuplicateExecption;
 import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
@@ -31,61 +30,43 @@ public class RegionalService {
 	}
 
 	public Page<Regional> findPageRegional(Integer page, Integer linesPerPage, String orderBy, String direction) {
-		try {
-			PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
-			return regionalRepository.findAll(pageRequest);
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
-		}
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+		return regionalRepository.findAll(pageRequest);
 	}
 
 	public List<Regional> findAll() {
-		try {
-			return regionalRepository.findAll();
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
-		}
+		return regionalRepository.findAll();
+
 	}
 
 	public Regional fromDTO(@Valid Regional objDto) {
-		try {
-			if (objDto.getLabel() == null || objDto.getRegiao() == null) {
-				throw new EmptyField("Label é obrigatórios.");
-			}
-			return new Regional(objDto.getId(), objDto.getLabel(), objDto.getRegiao());
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		if (objDto.getLabel() == null || objDto.getRegiao() == null) {
+			throw new EmptyField("Label é obrigatórios.");
 		}
+		return new Regional(objDto.getId(), objDto.getLabel(), objDto.getRegiao());
 	}
 
 	public Regional insert(Regional obj) {
-		try {
-			if (regionalRepository.existsByLabel(obj.getLabel())) {
-				throw new DuplicateExecption("Já existe um label com esse nome");
-			} else {
-				return regionalRepository.save(obj);
-			}
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		if (regionalRepository.existsByLabel(obj.getLabel())) {
+			throw new DuplicateExecption("Já existe um label com esse nome");
+		} else {
+			return regionalRepository.save(obj);
 		}
 	}
 
 	@Transactional
 	public Regional update(Regional obj) {
-		try {
-			if (obj.getLabel().trim().isEmpty()) {
-				throw new EmptyField("O Label não pode estar vazia.");
-			}
-			if (existsByLabelAndIdNot(obj.getLabel(), obj.getId())) {
-				throw new DuplicateExecption("Já existe um Label com esse nome.");
-			}
-			Regional existingRegional = findRegional(obj.getId());
-			existingRegional.setLabel(obj.getLabel());
-			existingRegional.setRegiao(obj.getRegiao());
-			return regionalRepository.save(existingRegional);
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		if (obj.getLabel().trim().isEmpty()) {
+			throw new EmptyField("O Label não pode estar vazia.");
 		}
+		if (existsByLabelAndIdNot(obj.getLabel(), obj.getId())) {
+			throw new DuplicateExecption("Já existe um Label com esse nome.");
+		}
+		Regional existingRegional = findRegional(obj.getId());
+		existingRegional.setLabel(obj.getLabel());
+		existingRegional.setRegiao(obj.getRegiao());
+		return regionalRepository.save(existingRegional);
+
 	}
 
 	private boolean existsByLabelAndIdNot(String label, Long id) {
@@ -98,15 +79,11 @@ public class RegionalService {
 	}
 
 	public void delete(Long id) {
-		try {
-			Regional regiao = findRegional(id);
-			if (regiao == null) {
-				throw new EspecialidadeNotFoundException("Regional com ID " + id + " não encontrada.");
-			}
-			regionalRepository.deleteById(id);
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Ocorreu Algum erro!! Acesso Negado!!");
+		Regional regiao = findRegional(id);
+		if (regiao == null) {
+			throw new EspecialidadeNotFoundException("Regional com ID " + id + " não encontrada.");
 		}
+		regionalRepository.deleteById(id);
 	}
 
 	public Page<Regional> findAllByOrderByLabel(Pageable pageable) {

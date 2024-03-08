@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +39,19 @@ public class User implements UserDetails {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Date createdAt;
 
+	public User() {
+
+	}
+
+	public User(long id, String login, String password, String role, Date createdAt) {
+		super();
+		this.id = id;
+		this.login = login;
+		this.password = password;
+		this.role = role;
+		this.createdAt = createdAt;
+	}
+
 	public String getLogin() {
 		return login;
 	}
@@ -45,7 +59,7 @@ public class User implements UserDetails {
 	public void setLogin(String login) {
 		this.login = login;
 	}
-	
+
 	public User(String login, String password, UserRole roles) {
 		this.login = login;
 		this.password = password;

@@ -19,8 +19,12 @@ public class EspecialidadeMedicaDTO implements Serializable {
     public EspecialidadeMedicaDTO() {
 
     }
+    public EspecialidadeMedicaDTO(long id, String descricao) {
+    	this.id =id;
+		this.descricao = descricao;
+	}
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 

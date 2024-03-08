@@ -7,9 +7,4 @@ public class EspecialidadeNotFoundException extends RuntimeException {
 	public EspecialidadeNotFoundException(String msg) {
 		 super(msg);
 	}
-
-	public EspecialidadeNotFoundException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
 }

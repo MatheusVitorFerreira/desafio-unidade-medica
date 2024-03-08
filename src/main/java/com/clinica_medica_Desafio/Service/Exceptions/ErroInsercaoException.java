@@ -8,8 +8,4 @@ public class ErroInsercaoException extends RuntimeException {
 		 super(msg);
 	}
 
-	public ErroInsercaoException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
 }

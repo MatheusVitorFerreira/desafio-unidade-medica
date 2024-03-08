@@ -2,7 +2,6 @@ package com.clinica_medica_Desafio.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
@@ -28,6 +27,10 @@ public class Especialidade_Medica implements Serializable {
 
 	}
 
+	public Especialidade_Medica(String descricao) {
+		this.descricao = descricao;
+	}
+
 	public Especialidade_Medica(Long id_especialidade, String descricao) {
 		this.id = id_especialidade;
 		this.descricao = descricao;
@@ -35,10 +38,6 @@ public class Especialidade_Medica implements Serializable {
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getDescricao() {
@@ -49,21 +48,7 @@ public class Especialidade_Medica implements Serializable {
 		this.descricao = descricao;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Especialidade_Medica other = (Especialidade_Medica) obj;
-		return Objects.equals(id, other.id);
+	public void setId(Long id) {
+		this.id = id;
 	}
 }
-

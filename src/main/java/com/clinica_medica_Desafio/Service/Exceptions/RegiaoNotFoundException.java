@@ -7,9 +7,4 @@ public class RegiaoNotFoundException extends RuntimeException {
 	public RegiaoNotFoundException(String msg) {
 		super(msg);
 	}
-
-	public RegiaoNotFoundException(String msg, Throwable cause) {
-		super(msg, cause);
-	}
-
 }

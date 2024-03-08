@@ -1,6 +1,7 @@
 package com.clinica_medica_Desafio.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.clinica_medica_Desafio.DTO.EspecialidadeMedicaDTO;
 import com.clinica_medica_Desafio.Repository.EspecialidadeMedicaRepository;
-import com.clinica_medica_Desafio.Service.Exceptions.DataAcessException;
 import com.clinica_medica_Desafio.Service.Exceptions.DuplicateExecption;
 import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
@@ -25,79 +25,73 @@ public class EspecialidadeMedicaService {
 	@Autowired
 	private EspecialidadeMedicaRepository especialidadeRepository;
 
-	public Especialidade_Medica findEspecialidade(Long id) {
-		return especialidadeRepository.findById(id)
-				.orElseThrow(() -> new EspecialidadeNotFoundException("Especialidade Medica não Encontrada"));
-	}
-
-	public Page<Especialidade_Medica> findPageEspecialidade(Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		try {
-			PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
-			return especialidadeRepository.findAll(pageRequest);
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Um Erro Aconteceu!! Acesso Negado", e);
-		}
+	public Especialidade_Medica findById(Long id) {
+		Optional<Especialidade_Medica> obj = especialidadeRepository.findById(id);
+		return obj.orElseThrow(() -> new EspecialidadeNotFoundException("Especialidade Medica não Encontrada"));
 	}
 
 	public List<Especialidade_Medica> findAll() {
 		return especialidadeRepository.findAll();
 	}
 
-	public Especialidade_Medica fromDTO(EspecialidadeMedicaDTO objDto) {
-		try {
-			if (especialidadeRepository.existsByDescricao(objDto.getDescricao())) {
-				throw new DuplicateExecption("Especialidade com essa descrição já cadastrada.");
-			}
-			Especialidade_Medica especialidadeMedica = new Especialidade_Medica(objDto.getId(), objDto.getDescricao());
-			return especialidadeMedica;
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Um Erro Aconteceu!! Acesso Negado", e);
-		}
+	public Page<Especialidade_Medica> findPageEspecialidade(Integer page, Integer linesPerPage, String orderBy,
+			String direction) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+		return especialidadeRepository.findAll(pageRequest);
 	}
 
 	@Transactional
 	public Especialidade_Medica insertEspecialidade(Especialidade_Medica obj) {
-		try {
-			if (obj.getDescricao().isEmpty()) {
-				throw new EmptyField("Campo vazio");
-			}
-			return especialidadeRepository.save(obj);
-		} catch (DataAcessException e) {
-			throw new DataAcessException("Um Erro Aconteceu!! Acesso Negado", e);
+		if (especialidadeRepository.existsByDescricao(obj.getDescricao())) {
+			throw new DuplicateExecption("Especialidade com essa descrição já cadastrada");
 		}
+		if (obj.getDescricao().isEmpty()) {
+			throw new EmptyField("A descrição não pode estar vazia.");
+		}
+		return especialidadeRepository.save(obj);
 	}
 
 	@Transactional
-	public Especialidade_Medica update(Especialidade_Medica obj) {
-		if (obj.getDescricao().trim().isEmpty()) {
+	public Especialidade_Medica update(EspecialidadeMedicaDTO objDto, Long id) {
+		Especialidade_Medica obj = findById(id);
+		if (objDto.getDescricao().trim().isEmpty()) {
 			throw new EmptyField("A descrição não pode estar vazia.");
 		}
-		if (existsByDescricao(obj.getDescricao())) {
+		if (existsByDescricao(objDto.getDescricao())) {
 			throw new DuplicateExecption("Já existe uma especialidade com essa descrição.");
 		}
-		Especialidade_Medica newObj = findEspecialidade(obj.getId());
-		updateDescricao(newObj, obj);
-		return especialidadeRepository.save(newObj);
+		obj.setDescricao(objDto.getDescricao());
+		return especialidadeRepository.save(obj);
 	}
 
-	public boolean existsByDescricao(String descricao) {
-		return especialidadeRepository.existsByDescricao(descricao);
-	}
-
-	public void updateDescricao(Especialidade_Medica newObj, Especialidade_Medica objDto) {
-		newObj.setDescricao(objDto.getDescricao());
+	public void updateDescricao(EspecialidadeMedicaDTO objDto) {
+		Especialidade_Medica obj = especialidadeRepository.findById(objDto.getId())
+				.orElseThrow(() -> new EspecialidadeNotFoundException("Especialidade médica não encontrada"));
+		obj.setDescricao(objDto.getDescricao());
+		especialidadeRepository.save(obj);
 	}
 
 	public void delete(Long id) {
-		Especialidade_Medica especialidade = findEspecialidade(id);
-		if (especialidade == null) {
-			throw new EspecialidadeNotFoundException("Especialidade com ID " + id + " não encontrada.");
-		}
-		especialidadeRepository.deleteById(id);
+	    Especialidade_Medica especialidade = findById(id);
+	    if (especialidade == null) {
+	        throw new EspecialidadeNotFoundException("Especialidade com ID " + id + " não encontrada.");
+	    }
+	    especialidadeRepository.deleteById(id);
+	}
+	public Especialidade_Medica findEspecialidadeByDescricao(String descricao) {
+		Optional<Especialidade_Medica> especialidadeOptional = especialidadeRepository.findEspecialidade(descricao);
+		return especialidadeOptional.orElseThrow(() -> new EspecialidadeNotFoundException(
+				"Especialidade não encontrada para a descrição: " + descricao));
 	}
 
 	public Page<Especialidade_Medica> findAllByOrderByDescricaoAsc(Pageable pageable) {
 		return especialidadeRepository.findAllByOrderByDescricaoAsc(pageable);
 	}
+
+	public boolean existsByDescricao(String descricao) {
+		return especialidadeRepository.existsByDescricao(descricao);
+	}
+	public EspecialidadeMedicaService(EspecialidadeMedicaRepository especialidadeMedicaRepository) {
+        this.especialidadeRepository = especialidadeMedicaRepository;
+    }
 }
