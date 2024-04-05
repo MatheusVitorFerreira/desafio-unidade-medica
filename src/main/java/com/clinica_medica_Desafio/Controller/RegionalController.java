@@ -30,10 +30,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
-
-
-
-
 @RestController
 @RequestMapping(value = "/regioes")
 public class RegionalController {
@@ -41,25 +37,14 @@ public class RegionalController {
 	@Autowired
 	private RegionalService regionalService;
 
-
 	@Operation(summary = "Busca dados de Regiões", method = "GET")
-    @ApiResponses(value = {
-        @ApiResponse(
-        		responseCode = "404",
-        		content = @Content(
-        				examples = {@ExampleObject(
-        				name = "getRegiaoById", 
-        				summary = "buscar regiões pelo id", 
-        				description = "Região não Encontrada", 
-        				value = "{\"error\": \"regiao não encontrada\"}" 
-        		        )	
-        })),
-        @ApiResponse(responseCode = "500", description = "Erro ao buscar a região")
-    })
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiResponses(value = { @ApiResponse(responseCode = "404", content = @Content(examples = {
+			@ExampleObject(name = "getRegiaoById", summary = "buscar regiões pelo id", description = "Região não Encontrada", value = "{\"error\": \"regiao não encontrada\"}") })),
+			@ApiResponse(responseCode = "500", description = "Erro ao buscar a região") })
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Regional> getRegiaoById(@PathVariable Long id) {
 		Regional regiao = regionalService.findRegional(id);
-		if(regiao == null) {
+		if (regiao == null) {
 			throw new RegiaoNotFoundException("Batatinha 123");
 		}
 		return ResponseEntity.ok(regiao);
@@ -84,7 +69,7 @@ public class RegionalController {
 			@ApiResponse(responseCode = "500", description = "Erro ao realizar a inserção"),
 			@ApiResponse(responseCode = "503", description = "Serviço indisponível no momento") })
 	@PostMapping()
-	public ResponseEntity<String> insert(@RequestBody Regional objDto) {
+	public ResponseEntity<String> insert(@Valid @RequestBody RegionalDTO objDto) {
 		Regional obj = regionalService.fromDTO(objDto);
 		regionalService.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -100,10 +85,8 @@ public class RegionalController {
 			@ApiResponse(responseCode = "403", description = "Permissão negada para atualizar as Regiões"),
 			@ApiResponse(responseCode = "503", description = "Serviço indisponível no momento") })
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Regional> updateRegioes(@Valid @RequestBody Regional objDto, @PathVariable Long id) {
-		Regional obj = regionalService.fromDTO(objDto);
-		obj.setId(id);
-		obj = regionalService.update(obj);
+	public ResponseEntity<Regional> updateRegioes(@Valid @RequestBody RegionalDTO objDto, @PathVariable Long id) {
+		Regional updatedRegional = regionalService.update(objDto, id);
 		return ResponseEntity.noContent().build();
 	}
 

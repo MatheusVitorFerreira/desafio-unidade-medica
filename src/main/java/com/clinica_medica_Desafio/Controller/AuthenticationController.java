@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.clinica_medica_Desafio.DTO.AuthenticationDTO;
+import com.clinica_medica_Desafio.DTO.UserDTO;
 import com.clinica_medica_Desafio.DTO.RegisterDTO;
-import com.clinica_medica_Desafio.Service.AuthorizationService;
+import com.clinica_medica_Desafio.Service.UserService;
 import com.clinica_medica_Desafio.Service.TokenService;
 
 import jakarta.validation.Valid;
@@ -19,13 +19,13 @@ import jakarta.validation.Valid;
 @RequestMapping("auth")
 public class AuthenticationController { 
 	@Autowired
-    private AuthorizationService authorizationService;
+    private UserService authorizationService;
     
     @Autowired
     TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO authenticationDTO){
+    public ResponseEntity<Object> login(@RequestBody @Valid UserDTO authenticationDTO){
         return authorizationService.login(authenticationDTO);
     }
 

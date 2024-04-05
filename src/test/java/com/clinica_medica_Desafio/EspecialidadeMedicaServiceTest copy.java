@@ -114,7 +114,6 @@ class EspecialidadeMedicaServiceTest {
 		assertEquals(3, response.size());
 		assertEquals(Especialidade_Medica.class, response.get(0).getClass());
 	}
-	// @Test
 
 	@Test
 	@DisplayName("Deve retornar True quando Insirir uma especilidade")
@@ -246,6 +245,13 @@ class EspecialidadeMedicaServiceTest {
         when(especialidadeMedicaRepository.findEspecialidade(descricao)).thenReturn(Optional.empty());
         assertThrows(EspecialidadeNotFoundException.class, () -> especialidadeMedicaService.findEspecialidadeByDescricao(descricao));
     }
+    
+    @Test
+	@DisplayName("Deve lançar exceção ao tentar encontrar uma especialidade médica que não existe")
+	void findByIdEspecialidadeMedicaIdNotFound() {
+		when(especialidadeMedicaRepository.findById(ID)).thenReturn(Optional.empty());
+		assertThrows(EspecialidadeNotFoundException.class, () -> especialidadeMedicaService.delete(ID));
+	}
     @Test
     public void testFindAllByOrderByDescricaoAsc() {
         List<Especialidade_Medica> especialidades = new ArrayList<>();

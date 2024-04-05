@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.clinica_medica_Desafio.DTO.AuthenticationDTO;
+import com.clinica_medica_Desafio.DTO.UserDTO;
 import com.clinica_medica_Desafio.DTO.LoginResponseDTO;
 import com.clinica_medica_Desafio.DTO.RegisterDTO;
 import com.clinica_medica_Desafio.Repository.UserRepository;
@@ -22,7 +22,7 @@ import com.clinica_medica_Desafio.model.User;
 import jakarta.validation.Valid;
 
 @Service
-public class AuthorizationService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -38,7 +38,7 @@ public class AuthorizationService implements UserDetailsService {
 		return userRepository.findByLogin(login);
 	}
 
-	public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO data) {
+	public ResponseEntity<Object> login(@RequestBody @Valid UserDTO data) {
 		AuthenticationManager authenticationManager = context.getBean(AuthenticationManager.class);
 		var userNamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
 		var auth = authenticationManager.authenticate(userNamePassword);

@@ -18,6 +18,12 @@ public class RegionalDTO implements Serializable {
 		this.regiao = obj.getRegiao();
 	}
 
+	public RegionalDTO(Long id, String label, String regiao) {
+		this.id = id;
+		this.label = label;
+		this.regiao = regiao;
+	}
+
 	public RegionalDTO() {
 
 	}
