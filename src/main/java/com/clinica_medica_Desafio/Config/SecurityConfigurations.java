@@ -32,9 +32,9 @@ public class SecurityConfigurations {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(HttpMethod.POST, "/especialidades/clinicas/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.POST, "/clinica/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.POST, "/regioes/**").hasRole("ADMIN")
+                    //.requestMatchers(HttpMethod.POST, "/especialidades/clinicas/**").hasRole("ADMIN")
+                    //.requestMatchers(HttpMethod.POST, "/clinica/**").hasRole("ADMIN")
+                    //.requestMatchers(HttpMethod.POST, "/regioes/**").hasRole("ADMIN")
                     .anyRequest().permitAll()
                 )
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

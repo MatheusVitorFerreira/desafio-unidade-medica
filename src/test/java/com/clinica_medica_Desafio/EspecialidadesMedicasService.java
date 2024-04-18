@@ -35,7 +35,7 @@ import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
 import com.clinica_medica_Desafio.model.Especialidade_Medica;
 
-class EspecialidadeMedicaServiceTest {
+class EspecialidadeMedicasServiceTest {
 
 	private static final Long ID = 1L;
 	private static final String DESCRICAO = "Cardiolista";
@@ -258,15 +258,25 @@ class EspecialidadeMedicaServiceTest {
         especialidades.add(new Especialidade_Medica(1L, "Especialidade A"));
         especialidades.add(new Especialidade_Medica(2L, "Especialidade B"));
         especialidades.add(new Especialidade_Medica(3L, "Especialidade C"));
-        when(especialidadeMedicaRepository.findAllByOrderByDescricaoAsc(Mockito.any(Pageable.class))).thenReturn(new PageImpl<>(especialidades));
+        
+        // Correção aqui
+        when(especialidadeMedicaRepository.findAllByOrderByDescricaoAsc(Mockito.any(Pageable.class)))
+        .thenReturn(new PageImpl<>(especialidades));
 
-        Page<Especialidade_Medica> paginaEspecialidades = especialidadeMedicaService.findAllByOrderByDescricaoAsc(Pageable.unpaged());
+        Page<Especialidade_Medica> paginaEspecialidades = especialidadeMedicaService
+                .findAllByOrderByDescricaoAsc(PageRequest.of(0, Integer.MAX_VALUE));
+        
         assertEquals(3, paginaEspecialidades.getTotalElements(), "Deve haver 3 especialidades na página");
+        
         List<Especialidade_Medica> especialidadesNaPagina = paginaEspecialidades.getContent();
-        assertEquals("Especialidade A", especialidadesNaPagina.get(0).getDescricao(), "A primeira especialidade deve ser 'Especialidade A'");
-        assertEquals("Especialidade B", especialidadesNaPagina.get(1).getDescricao(), "A segunda especialidade deve ser 'Especialidade B'");
-        assertEquals("Especialidade C", especialidadesNaPagina.get(2).getDescricao(), "A terceira especialidade deve ser 'Especialidade C'");
+        assertEquals("Especialidade A", especialidadesNaPagina.get(0).getDescricao(),
+                "A primeira especialidade deve ser 'Especialidade A'");
+        assertEquals("Especialidade B", especialidadesNaPagina.get(1).getDescricao(),
+                "A segunda especialidade deve ser 'Especialidade B'");
+        assertEquals("Especialidade C", especialidadesNaPagina.get(2).getDescricao(),
+                "A terceira especialidade deve ser 'Especialidade C'");
     }
+
 	private void StartEspecialidade() {
 		especialidadeMedica = new Especialidade_Medica(ID, DESCRICAO);
 		especialidadeMedicaDTO = new EspecialidadeMedicaDTO(ID, DESCRICAO);

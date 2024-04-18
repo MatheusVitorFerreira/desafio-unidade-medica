@@ -36,13 +36,13 @@ public class RegionalController {
 
 	@Autowired
 	private RegionalService regionalService;
-
+	
 	@Operation(summary = "Busca dados de Regiões", method = "GET")
 	@ApiResponses(value = { @ApiResponse(responseCode = "404", content = @Content(examples = {
 			@ExampleObject(name = "getRegiaoById", summary = "buscar regiões pelo id", description = "Região não Encontrada", value = "{\"error\": \"regiao não encontrada\"}") })),
 			@ApiResponse(responseCode = "500", description = "Erro ao buscar a região") })
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Regional> getRegiaoById(@PathVariable Long id) {
+	public ResponseEntity<Regional> findbyId(@PathVariable Long id) {
 		Regional regiao = regionalService.findRegional(id);
 		if (regiao == null) {
 			throw new RegiaoNotFoundException("Batatinha 123");

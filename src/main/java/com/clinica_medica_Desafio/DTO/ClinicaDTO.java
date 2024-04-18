@@ -2,57 +2,45 @@ package com.clinica_medica_Desafio.DTO;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.clinica_medica_Desafio.model.Clinica;
-import com.clinica_medica_Desafio.model.Especialidade_Medica;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.clinica_medica_Desafio.model.Regional;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClinicaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-
-	@NotBlank(message = "Campo Obrigatório")
 	private String razao_social;
-
-	@Max(14)
 	private String cnpj;
-
-	private Long regionalId;
-
-	private String regiao;
-
 	private LocalDateTime data_inauguracao;
-
 	private Boolean ativa;
-
 	private String nomefantasia;
-
-	private String regionalLabel;
-	private List<Especialidade_Medica> especialidades_medicas = new ArrayList<>();
+	private List<Long> especialidadesIds;
+	private List<EspecialidadeMedicaDTO> especialidades;
+	private Long regionalId;
+	private Regional regional;
 
 	public ClinicaDTO(Clinica clinica) {
 		this.id = clinica.getId();
-		this.nomefantasia = clinica. getNomefantasia();
+		this.razao_social = clinica.getRazao_social();
 		this.cnpj = clinica.getCnpj();
 		this.data_inauguracao = clinica.getData_inauguracao();
 		this.ativa = clinica.getAtiva();
-		this.razao_social = clinica.getRazao_social();
-		this.regiao = clinica.getRegional().getRegiao();
-		this.regionalLabel = clinica.getRegional().getLabel();
-		this.regionalId = clinica.getRegional().getId();
-		this.especialidades_medicas = new ArrayList<>(clinica.getEspecialidades());
+		this.nomefantasia = clinica.getNomefantasia();
 	}
 
 	public ClinicaDTO() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getRazao_social() {
@@ -91,40 +79,16 @@ public class ClinicaDTO implements Serializable {
 		return nomefantasia;
 	}
 
-	public void setnomefantasia(String nomefantasia) {
+	public void setNomefantasia(String nomefantasia) {
 		this.nomefantasia = nomefantasia;
 	}
 
-	public String getRegionalLabel() {
-		return regionalLabel;
-	}
-
-	public void setRegionalLabel(String regionalLabel) {
-		this.regionalLabel = regionalLabel;
-	}
-
-	public List<Especialidade_Medica> getEspecialidades_medicas() {
-		return especialidades_medicas;
-	}
-	@JsonIgnore
 	public List<Long> getEspecialidadesIds() {
-		List<Long> ids = new ArrayList<>();
-		for (Especialidade_Medica especialidade : especialidades_medicas) {
-			ids.add(especialidade.getId());
-		}
-		return ids;
-	}
-	@JsonIgnore
-	public void setEspecialidades(Set<Especialidade_Medica> especialidades) {
-		this.especialidades_medicas = new ArrayList<>(especialidades);
+		return especialidadesIds;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public void setEspecialidadesIds(List<Long> especialidadesIds) {
+		this.especialidadesIds = especialidadesIds;
 	}
 
 	public Long getRegionalId() {
@@ -135,14 +99,19 @@ public class ClinicaDTO implements Serializable {
 		this.regionalId = regionalId;
 	}
 
-	public void setEspecialidadesIds(List<Long> especialidadesIds) {
+	public List<EspecialidadeMedicaDTO> getEspecialidades() {
+		return especialidades;
 	}
 
-	public String getRegiao() {
-		return regiao;
+	public void setEspecialidades(List<EspecialidadeMedicaDTO> especialidades) {
+		this.especialidades = especialidades;
 	}
 
-	public void setRegiao(String regiao) {
-		this.regiao = regiao;
+	public Regional getRegional() {
+		return regional;
+	}
+
+	public void setRegional(Regional regional) {
+		this.regional = regional;
 	}
 }

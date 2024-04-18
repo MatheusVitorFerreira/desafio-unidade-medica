@@ -11,14 +11,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import com.clinica_medica_Desafio.DTO.UserDTO;
 import com.clinica_medica_Desafio.DTO.LoginResponseDTO;
 import com.clinica_medica_Desafio.DTO.RegisterDTO;
+import com.clinica_medica_Desafio.DTO.UserDTO;
 import com.clinica_medica_Desafio.Repository.UserRepository;
 import com.clinica_medica_Desafio.model.User;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 
 @Service
@@ -38,7 +38,7 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByLogin(login);
 	}
 
-	public ResponseEntity<Object> login(@RequestBody @Valid UserDTO data) {
+	public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid UserDTO data) {
 		AuthenticationManager authenticationManager = context.getBean(AuthenticationManager.class);
 		var userNamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
 		var auth = authenticationManager.authenticate(userNamePassword);
@@ -48,15 +48,17 @@ public class UserService implements UserDetailsService {
 		return ResponseEntity.ok(loginResponseDTO);
 	}
 
-	public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO registerDTO) {
-		if (this.userRepository.findByLogin(registerDTO.login()) != null) {
-			return ResponseEntity.badRequest().build();
-		}
-		String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
-		User newUser = new User(registerDTO.login(), encryptedPassword, registerDTO.role());
-		newUser.setCreatedAt(new Date(System.currentTimeMillis()));
-		this.userRepository.save(newUser);
+	public ResponseEntity<RegisterDTO> register(@RequestBody @Valid RegisterDTO registerDTO) {
+	    if (this.userRepository.findByLogin(registerDTO.login()) != null) {
+	        return ResponseEntity.badRequest().build();
+	    }
+	    String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
+	    Date now = new Date(); 
+	    User newUser = new User(registerDTO.login(), encryptedPassword, registerDTO.role(), now);
+	    this.userRepository.save(newUser);
 
-		return ResponseEntity.ok().build();
+	    return ResponseEntity.ok().build();
 	}
+
+
 }

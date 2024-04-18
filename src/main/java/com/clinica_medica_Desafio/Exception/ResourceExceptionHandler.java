@@ -16,6 +16,7 @@ import com.clinica_medica_Desafio.Service.Exceptions.EmptyField;
 import com.clinica_medica_Desafio.Service.Exceptions.ErroInsercaoException;
 import com.clinica_medica_Desafio.Service.Exceptions.EspecialidadeNotFoundException;
 import com.clinica_medica_Desafio.Service.Exceptions.InvalidCnpj;
+import com.clinica_medica_Desafio.Service.Exceptions.MinimoEspecialidadesException;
 import com.clinica_medica_Desafio.Service.Exceptions.RegiaoNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +34,14 @@ public class ResourceExceptionHandler {
 
 		StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), e.getMessage(), System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	}
+	@ExceptionHandler(MinimoEspecialidadesException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<StandardError> MinimoEspecialidadesException(MinimoEspecialidadesException e,
+			HttpServletRequest request) {
+		
+		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 
 	@ExceptionHandler(RegiaoNotFoundException.class)

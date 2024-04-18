@@ -18,12 +18,10 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Table(name = "users")
 @Entity(name = "users")
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
 	private static final long serialVersionUID = 1L;
@@ -39,17 +37,16 @@ public class User implements UserDetails {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Date createdAt;
 
-	public User() {
-
-	}
-
-	public User(long id, String login, String password, String role, Date createdAt) {
-		super();
-		this.id = id;
+	public User(String login, String password, UserRole role, Date createdAt) {
 		this.login = login;
 		this.password = password;
-		this.role = role;
+		this.role = role.getRole();
 		this.createdAt = createdAt;
+	}
+
+	public User(String login, String password) {
+		this.login = login;
+		this.password = password;
 	}
 
 	public String getLogin() {
@@ -58,12 +55,6 @@ public class User implements UserDetails {
 
 	public void setLogin(String login) {
 		this.login = login;
-	}
-
-	public User(String login, String password, UserRole roles) {
-		this.login = login;
-		this.password = password;
-		this.role = roles.getRole();
 	}
 
 	public Date getCreatedAt() {

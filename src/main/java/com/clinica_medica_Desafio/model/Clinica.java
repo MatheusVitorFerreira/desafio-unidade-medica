@@ -3,7 +3,6 @@ package com.clinica_medica_Desafio.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 
 @Entity
 public class Clinica implements Serializable {
@@ -35,6 +35,9 @@ public class Clinica implements Serializable {
 	private LocalDateTime data_inauguracao;
 
 	private Boolean ativa;
+	
+	@Transient
+    private Set<Long> especialidades_medicas_ids;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "regional_id", nullable = false)
@@ -46,18 +49,9 @@ public class Clinica implements Serializable {
 	private Set<Especialidade_Medica> especialidades = new HashSet<>();
 
 	public Clinica() {
+		
+	}
 
-	}
-	public Clinica(Long id, String razao_social, String cnpj, String nomefantasia, LocalDateTime data_inauguracao,
-			Boolean ativa) {
-		super();
-		this.id = id;
-		this.razao_social = razao_social;
-		this.cnpj = cnpj;
-		this.nomefantasia = nomefantasia;
-		this.data_inauguracao = data_inauguracao;
-		this.ativa = ativa;
-	}
 	public Regional getRegional() {
 		return regional;
 	}
@@ -89,6 +83,13 @@ public class Clinica implements Serializable {
 	public void setRazao_social(String razao_social) {
 		this.razao_social = razao_social;
 	}
+	 public Set<Long> getEspecialidades_medicas_ids() {
+	        return especialidades_medicas_ids;
+	    }
+
+	    public void setEspecialidades_medicas_ids(Set<Long> especialidades_medicas_ids) {
+	        this.especialidades_medicas_ids = especialidades_medicas_ids;
+	    }
 
 	public String getCnpj() {
 		return cnpj;
@@ -113,12 +114,6 @@ public class Clinica implements Serializable {
 	public void setAtiva(Boolean ativa) {
 		this.ativa = ativa;
 	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
 	public String getNomefantasia() {
 		return nomefantasia;
 	}
@@ -126,16 +121,6 @@ public class Clinica implements Serializable {
 	public void setNomefantasia(String nomefantasia) {
 		this.nomefantasia = nomefantasia;
 	}
+	
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Clinica other = (Clinica) obj;
-		return Objects.equals(id, other.id);
-	}
 }

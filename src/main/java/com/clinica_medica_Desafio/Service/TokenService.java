@@ -15,55 +15,57 @@ import com.clinica_medica_Desafio.model.User;
 @Service
 public class TokenService {
 
-    private final String secret = "segredinho";
-    private final long expirationTimeInMinutes = 2; // Tempo de expiração em minutos
+	private final String secret = "segredinho";
+	private final long expirationTimeInMinutes = 120; // 2 horas
 
-    public TokenResponse generateToken(User user) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
+	public TokenResponse generateToken(User user) {
+		Instant expirationInstant = Instant.now().plus(expirationTimeInMinutes, ChronoUnit.MINUTES);
+		Date expirationDate = Date.from(expirationInstant);
 
-            Instant expirationInstant = Instant.now().plus(expirationTimeInMinutes, ChronoUnit.MINUTES);
-            Date expirationDate = Date.from(expirationInstant);
+		return generateToken(user, expirationDate);
+	}
 
-            String token = JWT.create()
-                    .withIssuer("auth")
-                    .withSubject(user.getLogin())
-                    .withExpiresAt(expirationDate)
-                    .sign(algorithm);
+	public TokenResponse generateToken(User user, Date expirationDate) {
+		try {
+			Algorithm algorithm = Algorithm.HMAC256(secret);
 
-            return new TokenResponse(token, expirationInstant.toString());
+			String token = JWT.create().withIssuer("auth").withSubject(user.getLogin()).withExpiresAt(expirationDate)
+					.sign(algorithm);
 
-        } catch (JWTVerificationException exception) {
-            throw new RuntimeException("Erro ao gerar token", exception);
-        }
-    }
+			Instant expirationInstant = expirationDate.toInstant();
+			return new TokenResponse(token, expirationInstant.toString());
 
-    public String validateToken(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
-            return decodedJWT.getSubject();
-        } catch (JWTVerificationException exception) {
-            return null;
-        }
-    }
+		} catch (JWTVerificationException exception) {
+			throw new RuntimeException("Erro ao gerar token", exception);
+		}
+	}
 
-    public static class TokenResponse {
-        private final String token;
-        private final String expiration;
+	public String validateToken(String token) {
+		try {
+			Algorithm algorithm = Algorithm.HMAC256(secret);
+			DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
+			return decodedJWT.getSubject();
+		} catch (JWTVerificationException exception) {
+			return null;
+		}
+	}
 
-        public TokenResponse(String token, String expiration) {
-            this.token = token;
-            this.expiration = expiration;
-        }
+	public static class TokenResponse {
+		private final String token;
+		private final String expiration;
 
-        public String getToken() {
-            return token;
-        }
+		public TokenResponse(String token, String expiration) {
+			this.token = token;
+			this.expiration = expiration;
+		}
 
-        public String getExpiration() {
-            Instant instant = Instant.parse(expiration);
-            return instant.toString();
-        }
-    }
+		public String getToken() {
+			return token;
+		}
+
+		public String getExpiration() {
+			return expiration;
+		}
+	}
+
 }
