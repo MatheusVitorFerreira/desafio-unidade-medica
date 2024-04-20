@@ -51,9 +51,9 @@ public class EspecialidadeMedicaController {
 			@ApiResponse(responseCode = "200", description = "Busca de especialidades médicas realizada com sucesso"),
 			@ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
 			@ApiResponse(responseCode = "400", description = "Parâmetros inválidos"),
-			@ApiResponse(responseCode = "500", description = "Erro ao realizar a busca das Regiões"),
+			@ApiResponse(responseCode = "500", description = "Erro ao realizar a busca das especialidades médicas"),
 			@ApiResponse(responseCode = "404", description = "Especialidades médicas não encontradas"),
-			@ApiResponse(responseCode = "403", description = "Permissão negada para acessar as Regiões"),
+			@ApiResponse(responseCode = "403", description = "Permissão negada para acessar as especialidades médicas"),
 			@ApiResponse(responseCode = "503", description = "Serviço indisponível no momento"), })
 	@GetMapping(value = "/page")
 	public ResponseEntity<Page<EspecialidadeMedicaDTO>> findPageEspecialidade(
@@ -70,8 +70,8 @@ public class EspecialidadeMedicaController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "20", description = "Especialidade Médica criada com sucesso"),
 			@ApiResponse(responseCode = "400", description = "Dados de requisição inválida. Exemplos: \n* { \"EmptyField\": \"Campo vazio.\" }\n* { \"DuplicateExecption\": \"Especialidade com essa descrição já cadastrada\" }"),
 			@ApiResponse(responseCode = "500", description = "Erro ao realizar a inserção"),
-			@ApiResponse(responseCode = "404", description = "Regiões não encontradas"),
-			@ApiResponse(responseCode = "403", description = "Permissão negada para inserir especialidades medicas"),
+			@ApiResponse(responseCode = "404", description = "Especialidade médica não encontradas"),
+			@ApiResponse(responseCode = "403", description = "Permissão negada para inserir especialidades médicas"),
 			@ApiResponse(responseCode = "503", description = "Serviço indisponível no momento"), })
 	@PostMapping
 	public ResponseEntity<Object> insert(@RequestBody Especialidade_Medica objDto) {
@@ -81,11 +81,10 @@ public class EspecialidadeMedicaController {
 		return ResponseEntity.created(uri).build();
 	}
 
-	@SuppressWarnings("unused")
 	@Operation(summary = "Atualização de especialidades medicas no Banco de Dados", method = "PUT")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Especialidade médica Atualizada com sucesso"),
-			@ApiResponse(responseCode = "201", description = "Região criada com sucesso"),
+			@ApiResponse(responseCode = "201", description = "Especialidade médica criada com sucesso"),
 			@ApiResponse(responseCode = "400", description = "Dados de requisição inválida. Exemplos: \n* { \"EmptyField\": \"Campo vazio\" }\n* { \"DuplicateExecption\": \"Especialidade com essa descrição já cadastrada\" }"),
 			@ApiResponse(responseCode = "500", description = "Erro ao realizar a inserção"),
 			@ApiResponse(responseCode = "404", description = "Especialidade médica não encontradas"),
