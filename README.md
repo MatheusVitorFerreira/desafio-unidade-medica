@@ -1,4 +1,4 @@
-Sistema de Gerenciamento de Clínicas Médicas: 
+Sistema de Gerenciamento de Clínicas Médicas
 
 Detalhes da API:
 
