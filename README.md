@@ -13,15 +13,16 @@ Paginação e ordenação: A API permite paginar os resultados da busca e orden�
 Autenticação segura: A API utiliza autenticação por token com JWT para garantir o controle de acesso e a segurança dos dados.
 Documentação completa: A API é documentada em detalhes com o Swagger, facilitando o uso por desenvolvedores.
 Testes unitários: A API possui testes unitários abrangentes para garantir a qualidade e confiabilidade do código.
+
 Tecnologias:
 
-.Linguagem de programação: Java
-.Framework: Spring Boot
-.Mapeamento objeto-relacional: Hibernate
-.Banco de dados: MySQL
-.Autenticação: JWT
-.Documentação: Swagger
-.Testes: Unit
+-Linguagem de programação: Java
+-Framework: Spring Boot
+-Mapeamento objeto-relacional: Hibernate
+-Banco de dados: MySQL
+-Autenticação: JWT
+-Documentação: Swagger
+-Testes: JUnit
 
 Benefícios:
 
