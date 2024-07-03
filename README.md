@@ -16,13 +16,13 @@ Testes unitários: A API possui testes unitários abrangentes para garantir a qu
 
 Tecnologias:
 
--Linguagem de programação: Java
--Framework: Spring Boot
--Mapeamento objeto-relacional: Hibernate
--Banco de dados: MySQL
--Autenticação: JWT
--Documentação: Swagger
--Testes: JUnit
+- Linguagem de programação: Java
+- Framework: Spring Boot
+- Mapeamento objeto-relacional: Hibernate
+- Banco de dados: MySQL
+- Autenticação: JWT
+- Documentação: Swagger
+- Testes: JUnit
 
 Benefícios:
 
