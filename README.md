@@ -42,4 +42,4 @@ Esta API permite a gestão de clínicas médicas, incluindo a criação, atualiz
 
 A API possui documentação completa e detalhada disponível através do Swagger. Além disso, a API possui testes unitários abrangentes que garantem a qualidade e confiabilidade do código.
 
-Link do Swagger = http://localhost:8080/swagger-ui/index.html#/
+Link do Swagger = /swagger-ui/index.html#/
