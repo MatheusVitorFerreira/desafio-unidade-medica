@@ -33,6 +33,13 @@ Usabilidade: A API é fácil de usar e bem documentada, facilitando a integraç�
 Confiabilidade: A API possui testes abrangentes para garantir a qualidade e confiabilidade do código.
 Para quem é recomendado:
 
+# Clínica Médica API
+
+Esta API permite a gestão de clínicas médicas, incluindo a criação, atualização, exclusão e busca de informações sobre clínicas e especialidades médicas.
+
+
 ## Documentação e Testes:
 
 A API possui documentação completa e detalhada disponível através do Swagger. Além disso, a API possui testes unitários abrangentes que garantem a qualidade e confiabilidade do código.
+
+Link do Swagger = http://localhost:8080/swagger-ui/index.html#/
